@@ -6,8 +6,8 @@ use File::Temp ();
 use Cwd;
 use File::Spec;
 
+my $dir_template = 'temp_dir_XXXX';
 my %opt_dir = (
-    TEMPLATE        => 'temp_dir_XXXX',
     DIR             => '.',
 );
 my %opt_file = (
@@ -16,11 +16,13 @@ my %opt_file = (
 );
 
 # create temporary dir
-my $tmpdir = File::Temp->newdir(%opt_dir, CLEANUP => 0);
+my $tmpdir = File::Temp->newdir($dir_template, %opt_dir, CLEANUP => 0)
+    or die "cannot create tmp file.";
 print "DIRNAME: ", $tmpdir->dirname(), "\n";
 
 # create temporary file in the temporary dir
-my $fh = File::Temp->new( %opt_file, DIR => File::Spec->catfile( getcwd(), $tmpdir->dirname() ) );
+my $fh = File::Temp->new( %opt_file, DIR => File::Spec->catfile( getcwd(), $tmpdir->dirname() ) )
+    or die "cannot create tmp file.";
 print "FILENAME: ", $fh->filename(), "\n";
 
 # DO NOT delete temporary file (default is 1)
